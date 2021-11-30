@@ -24,7 +24,7 @@ class Products {
 		return product;
 	}
 
-	static async get(productId) {
+	static async getById(productId) {
 		const result = await db.query("SELECT * FROM products where id = $1", [
 			productId,
 		]);
@@ -37,7 +37,7 @@ class Products {
 	}
 
 	static async getAll() {
-		const result = await db.query("SELECT * FROM products");
+		const result = await db.query("SELECT p FROM products");
 
 		const product = result.rows;
 

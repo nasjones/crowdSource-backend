@@ -7,6 +7,8 @@ const {
 const bcrypt = require("bcrypt");
 const { WORK_FACTOR } = require("../config");
 const sqlUpdate = require("../helpers/sql");
+const Products = require("./products");
+const Investments = require("./investments");
 
 class User {
 	static async register({
@@ -60,7 +62,6 @@ class User {
 
 		const user = result.rows[0];
 
-		console.log(username, password, user);
 		if (user) {
 			const correct = await bcrypt.compare(user.password, password);
 
@@ -95,8 +96,16 @@ class User {
 	}
 
 	static async invest({ username, productId, amount }) {
-		const user = this.get(username);
-		const
+		await this.get(username);
+		await Products.getById(productId);
+
+		const investment = await Investments.create({
+			username,
+			productId,
+			amount,
+		});
+
+		return investment;
 	}
 }
 

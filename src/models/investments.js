@@ -12,7 +12,7 @@ class Investments {
 		await User.get(username);
 		await Products.get(productId);
 
-		const result = db.query(
+		const result = await db.query(
 			"INSERT INTO investments (username, product_id, amount) VALUES ($1, $2, $3)",
 			[username, productId, amount]
 		);
@@ -20,8 +20,8 @@ class Investments {
 		return result.rows[0];
 	}
 
-	static async get({ investmentId }) {
-		const result = db.query("SELECT * FROM investments where id = $1", [
+	static async getById({ investmentId }) {
+		const result = await db.query("SELECT * FROM investments where id = $1", [
 			investmentId,
 		]);
 
@@ -34,4 +34,4 @@ class Investments {
 	}
 }
 
-modules.exports = Investments;
+module.exports = Investments;

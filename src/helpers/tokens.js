@@ -14,13 +14,6 @@ function createToken(user) {
 		"createToken passed a user without is admin property"
 	);
 
-	console.log(
-		jwt.sign(
-			{ username: user.username, isAdmin: user.isAdmin || false },
-			SECRET_KEY
-		)
-	);
-
 	return jwt.sign(
 		{ username: user.username, isAdmin: user.isAdmin || false },
 		SECRET_KEY
