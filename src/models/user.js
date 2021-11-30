@@ -43,7 +43,6 @@ class User {
 		);
 
 		const user = result.rows[0];
-
 		return user;
 	}
 
@@ -63,7 +62,7 @@ class User {
 		const user = result.rows[0];
 
 		if (user) {
-			const correct = await bcrypt.compare(user.password, password);
+			const correct = await bcrypt.compare(password, user.password);
 
 			if (correct === true) {
 				delete user.password;
