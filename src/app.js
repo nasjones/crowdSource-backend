@@ -26,15 +26,14 @@ app.get("/", (req, res) => {
 	res.send("Hello, world!");
 });
 
-app.use(function errorHandler(error, req, res, next) {
-	let response;
-	if (NODE_ENV === "production") {
-		response = { error: { message: "server error" } };
-	} else {
-		console.error(error);
-		response = { message: error.message, error };
-	}
-	res.status(500).json(response);
+app.use(function (err, req, res, next) {
+	if (process.env.NODE_ENV !== "test") console.error(err.stack);
+	const status = err.status || 500;
+	const message = err.message;
+
+	return res.status(status).json({
+		error: { message, status },
+	});
 });
 
 module.exports = app;
