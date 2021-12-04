@@ -10,7 +10,7 @@ CREATE TABLE users (
 CREATE TABLE products (
   product_id serial PRIMARY KEY,
   title text NOT NULL,
-  synopsis char(100) DEFAULT "",
+  synopsis char(100),
   description text NOT NULL,
   amount_sought decimal(12, 2) NOT NULL CONSTRAINT positive CHECK (amount_sought > 0)
 );
