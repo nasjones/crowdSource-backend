@@ -25,9 +25,10 @@ class Products {
 	}
 
 	static async getById(productId) {
-		const result = await db.query("SELECT * FROM products where id = $1", [
-			productId,
-		]);
+		const result = await db.query(
+			"SELECT * FROM products where product_id = $1",
+			[productId]
+		);
 
 		const product = result.rows[0];
 
@@ -38,7 +39,7 @@ class Products {
 
 	static async getAll() {
 		const result = await db.query(
-			"SELECT p.id, p.title, p.synopsis, p.synopsis, p.description, p.amount_sought, u.username FROM products AS p INNER JOIN product_creator AS pc USING(product_id) INNER JOIN users AS u USING(username)"
+			"SELECT p.product_id, p.title, p.synopsis, p.synopsis, p.description, p.amount_sought, u.username FROM products AS p INNER JOIN product_creator AS pc USING(product_id) INNER JOIN users AS u USING(username)"
 		);
 
 		const product = result.rows;
