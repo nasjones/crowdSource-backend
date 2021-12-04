@@ -83,15 +83,30 @@ class User {
 
 	static async get(username) {
 		const userResults = await db.query(
-			"SELECT username, first_name, last_name, email, is_admin FROM users WHERE username = $1",
+			"SELECT username, first_name, last_name, email FROM users WHERE username = $1",
 			[username]
 		);
+		console.log(userResults.rows);
 
 		const user = userResults.rows[0];
 
 		if (!user) throw new NotFoundError(`No user:${username}`);
 
-		return user;
+		const productResults = await db.query(
+			"SELECT p.product_id, p.title FROM products AS p INNER JOIN product_creator AS pc USING(product_id) WHERE pc.username = $1",
+			[username]
+		);
+
+		const products = productResults.rows;
+
+		const investmentResults = await db.query(
+			"SELECT i.amount, p.product_id, p.title FROM investments AS i INNER JOIN products AS p USING(product_id) WHERE i.username = $1",
+			[username]
+		);
+
+		const investments = investmentResults.rows;
+
+		return { ...user, products, investments };
 	}
 
 	static async invest({ username, productId, amount }) {

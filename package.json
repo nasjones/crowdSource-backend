@@ -22,7 +22,8 @@
 		"jsonschema": "^1.4.0",
 		"jsonwebtoken": "^8.5.1",
 		"morgan": "^1.10.0",
-		"pg": "^8.7.1"
+		"pg": "^8.7.1",
+		"stripe": "^8.191.0"
 	},
 	"devDependencies": {
 		"nodemon": "^2.0.2"

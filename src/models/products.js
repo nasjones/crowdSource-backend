@@ -25,21 +25,27 @@ class Products {
 	}
 
 	static async getById(productId) {
-		const result = await db.query(
+		const productResult = await db.query(
 			"SELECT * FROM products where product_id = $1",
 			[productId]
 		);
 
-		const product = result.rows[0];
+		const product = productResult.rows[0];
 
 		if (!product) throw new NotFoundError(`No product with id: ${productId}`);
 
-		return product;
+		const amountResult = await db.query(
+			"SELECT SUM(amount) AS funded FROM investments WHERE product_id=$1",
+			[productId]
+		);
+		const funded = amountResult.rows[0];
+
+		return { ...product, ...funded };
 	}
 
 	static async getAll() {
 		const result = await db.query(
-			"SELECT p.product_id, p.title, p.synopsis, p.synopsis, p.description, p.amount_sought, u.username FROM products AS p INNER JOIN product_creator AS pc USING(product_id) INNER JOIN users AS u USING(username)"
+			"SELECT p.product_id, p.title, p.synopsis, p.synopsis, p.description, p.amount_sought, u.first_name, u.last_name FROM products AS p INNER JOIN product_creator AS pc USING(product_id) INNER JOIN users AS u USING(username)"
 		);
 
 		const product = result.rows;
