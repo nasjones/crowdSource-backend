@@ -8,6 +8,7 @@ const { authenticateJWT } = require("./middleware/auth");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/productRoutes");
+const investmentRoutes = require("./routes/investmentRoutes");
 
 const app = express();
 const morganOption = NODE_ENV === "production" ? "tiny" : "common";
@@ -21,6 +22,7 @@ app.use(cors());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
+app.use("/investments", investmentRoutes);
 
 app.get("/", (req, res) => {
 	res.send("Hello, world!");

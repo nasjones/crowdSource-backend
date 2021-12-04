@@ -4,20 +4,32 @@ const {
 	NotFoundError,
 	UnauthorizedError,
 } = require("../expressError");
-const User = require("../models/user");
-const Products = require("../models/products");
 
 class Investments {
 	static async create({ username, productId, amount }) {
-		await User.get(username);
-		await Products.get(productId);
+		const userResults = await db.query(
+			"SELECT username FROM users WHERE username = $1",
+			[username]
+		);
+
+		const user = userResults.rows[0];
+		if (!user) throw new NotFoundError(`No user:${username}`);
+
+		const productResult = await db.query(
+			"SELECT product_id FROM products WHERE product_id=$1",
+			[productId]
+		);
+
+		const product = productResult.rows[0];
+
+		if (!product) throw new NotFoundError(`No product with id: ${productId}`);
 
 		const result = await db.query(
 			"INSERT INTO investments (username, product_id, amount) VALUES ($1, $2, $3)",
 			[username, productId, amount]
 		);
-
-		return result.rows[0];
+		console.log(result.rows[0]);
+		return { message: `${amount} invested` };
 	}
 }
 
