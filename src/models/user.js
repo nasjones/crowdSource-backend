@@ -43,6 +43,7 @@ class User {
 		);
 
 		const user = result.rows[0];
+		if (!user) throw new BadRequestError("Problem creating user");
 		return user;
 	}
 
@@ -73,20 +74,11 @@ class User {
 		throw new UnauthorizedError("Invalid username/password");
 	}
 
-	static async getAll() {
-		const result = await db.query(
-			`SELECT username from users ORDER BY username`
-		);
-
-		return result.rows;
-	}
-
 	static async get(username) {
 		const userResults = await db.query(
 			"SELECT username, first_name, last_name, email FROM users WHERE username = $1",
 			[username]
 		);
-		console.log(userResults.rows);
 
 		const user = userResults.rows[0];
 
@@ -118,6 +110,8 @@ class User {
 			productId,
 			amount,
 		});
+
+		if (!investment) throw new BadRequestError("Problem sending your payment");
 
 		return investment;
 	}

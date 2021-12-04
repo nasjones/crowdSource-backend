@@ -19,19 +19,6 @@ class Investments {
 
 		return result.rows[0];
 	}
-
-	static async getById({ investmentId }) {
-		const result = await db.query("SELECT * FROM investments where id = $1", [
-			investmentId,
-		]);
-
-		const investment = result.rows[0];
-
-		if (!investment)
-			throw new NotFoundError(`No investment with id: ${investmentId}`);
-
-		return investment;
-	}
 }
 
 module.exports = Investments;

@@ -4,19 +4,18 @@ const {
 	NotFoundError,
 	UnauthorizedError,
 } = require("../expressError");
-const sqlUpdate = require("../helpers/sql");
 const User = require("./user");
 
 class Products {
 	static async create({ title, description, amountSought, username }) {
 		await User.get(username);
-		const result = db.query(
+		const result = await db.query(
 			"INSERT INTO products (title, description,amount_sought) VALUES ($1, $2, $3)",
 			[title, description, amountSought]
 		);
 		const product = result.rows[0];
 
-		db.query(
+		await db.query(
 			"INSERT INTO product_creator (username, product_id) VALUES ($1, $2)",
 			[username, product.id]
 		);
@@ -26,7 +25,7 @@ class Products {
 
 	static async getById(productId) {
 		const productResult = await db.query(
-			"SELECT * FROM products where product_id = $1",
+			"SELECT p.product_id, p.title, p.synopsis, p.description, p.amount_sought, concat_ws(' ', u.first_name, u.last_name) as full_name FROM products AS p INNER JOIN product_creator AS pc USING(product_id) INNER JOIN users AS u USING(username) WHERE product_id=$1",
 			[productId]
 		);
 
@@ -38,14 +37,14 @@ class Products {
 			"SELECT SUM(amount) AS funded FROM investments WHERE product_id=$1",
 			[productId]
 		);
-		const funded = amountResult.rows[0];
+		const { funded } = amountResult.rows[0];
 
-		return { ...product, ...funded };
+		return { ...product, funded: funded };
 	}
 
 	static async getAll() {
 		const result = await db.query(
-			"SELECT p.product_id, p.title, p.synopsis, p.synopsis, p.description, p.amount_sought, u.first_name, u.last_name FROM products AS p INNER JOIN product_creator AS pc USING(product_id) INNER JOIN users AS u USING(username)"
+			"SELECT p.product_id, p.title, p.synopsis, p.amount_sought, concat_ws(' ', u.first_name, u.last_name) as full_name FROM products AS p INNER JOIN product_creator AS pc USING(product_id) INNER JOIN users AS u USING(username)"
 		);
 
 		const product = result.rows;
