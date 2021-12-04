@@ -25,7 +25,7 @@ class User {
 		);
 
 		if (duplicateCheck.rows[0])
-			throw new BadRequestError(`Duplicate username: ${username}`);
+			throw new BadRequestError(`Username: ${username} already in use`);
 
 		const hashedPassword = await bcrypt.hash(password, WORK_FACTOR);
 

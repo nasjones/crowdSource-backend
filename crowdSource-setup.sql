@@ -8,8 +8,9 @@ CREATE TABLE users (
 );
 
 CREATE TABLE products (
-  id serial PRIMARY KEY,
+  product_id serial PRIMARY KEY,
   title text NOT NULL,
+  synopsis char(100) DEFAULT "",
   description text NOT NULL,
   amount_sought decimal(12, 2) NOT NULL CONSTRAINT positive CHECK (amount_sought > 0)
 );
