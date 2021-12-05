@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 const { WORK_FACTOR } = require("../config");
 const sqlUpdate = require("../helpers/sql");
 const Products = require("./products");
-const Investments = require("./investments");
+// const Investments = require("./investments");
 
 class User {
 	static async register({
@@ -100,30 +100,30 @@ class User {
 
 		const products = productResults.rows;
 
-		const investmentResults = await db.query(
-			"SELECT i.amount, p.product_id, p.title FROM investments AS i INNER JOIN products AS p USING(product_id) WHERE i.username = $1",
-			[username]
-		);
+		// const investmentResults = await db.query(
+		// 	"SELECT i.amount, p.product_id, p.title FROM investments AS i INNER JOIN products AS p USING(product_id) WHERE i.username = $1",
+		// 	[username]
+		// );
 
-		const investments = investmentResults.rows;
+		// const investments = investmentResults.rows;
 
-		return { ...user, products, investments };
+		return { ...user, products };
 	}
 
-	static async invest({ username, productId, amount }) {
-		await this.get(username);
-		await Products.getById(productId);
+	// static async invest({ username, productId, amount }) {
+	// 	await this.get(username);
+	// 	await Products.getById(productId);
 
-		const investment = await Investments.create({
-			username,
-			productId,
-			amount,
-		});
+	// 	const investment = await Investments.create({
+	// 		username,
+	// 		productId,
+	// 		amount,
+	// 	});
 
-		if (!investment) throw new BadRequestError("Problem sending your payment");
+	// 	if (!investment) throw new BadRequestError("Problem sending your payment");
 
-		return investment;
-	}
+	// 	return investment;
+	// }
 
 	static async getStripe(username) {
 		const results = await db.query(
