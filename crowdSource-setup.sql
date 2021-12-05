@@ -20,12 +20,6 @@ CREATE TABLE product_creator (
   product_id integer REFERENCES products ON DELETE CASCADE
 );
 
--- CREATE TABLE investments (
---   id serial PRIMARY KEY,
---   username varchar(25) REFERENCES users ON DELETE CASCADE,
---   product_id integer REFERENCES products ON DELETE CASCADE,
---   amount decimal(9, 2) NOT NULL CONSTRAINT positive CHECK (amount > 0)
--- );
 CREATE TABLE stripe_account (
   username varchar(25) REFERENCES users ON DELETE CASCADE UNIQUE,
   id text NOT NULL UNIQUE

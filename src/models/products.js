@@ -47,12 +47,6 @@ class Products {
 
 		if (!product) throw new NotFoundError(`No product with id: ${productId}`);
 
-		// const amountResult = await db.query(
-		// 	"SELECT SUM(amount) AS funded FROM investments WHERE product_id=$1",
-		// 	[productId]
-		// );
-		// const { funded } = amountResult.rows[0];
-
 		return product;
 	}
 

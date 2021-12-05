@@ -1,5 +1,4 @@
 const express = require("express");
-// const Investments = require("../models/investments");
 const { requireLogin } = require("../middleware/auth");
 const router = new express.Router();
 const { STRIPE_KEY } = require("../config");
