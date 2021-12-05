@@ -5,9 +5,8 @@ const { requireLogin, checkUserOrAdmin } = require("../middleware/auth");
 const { createToken } = require("../helpers/tokens");
 const { BadRequestError } = require("../expressError");
 const { RETURN_URL, REFRESH_URL } = require("../config");
-const stripe = require("stripe")(
-	"sk_test_51JzQjnAy5vV2xzIS5SP6FbBtd471GHJD3ve217eqXsgWCvONMSvWrmesXk4lxMzQwrrfn8GzmQcAnPcnLs8yYP6T00hqFQAsc9"
-);
+const { STRIPE_KEY } = require("../config");
+const stripe = require("stripe")(STRIPE_KEY);
 
 router.post("/login", async function (req, res, next) {
 	try {
@@ -60,7 +59,7 @@ router.get("/payment", requireLogin, async function (req, res, next) {
 router.get("/reauthpayment", checkUserOrAdmin, async function (req, res, next) {
 	try {
 		const account = await User.getStripe(res.locals.user.username);
-		console.log(account);
+
 		const accountLink = await stripe.accountLinks.create({
 			account: account.id,
 			refresh_url: REFRESH_URL,
