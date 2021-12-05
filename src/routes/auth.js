@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const express = require("express");
 const router = new express.Router();
-const { requireLogin } = require("../middleware/auth");
+const { requireLogin, checkUserOrAdmin } = require("../middleware/auth");
 const { createToken } = require("../helpers/tokens");
 const { BadRequestError } = require("../expressError");
 const { RETURN_URL, REFRESH_URL } = require("../config");
@@ -43,6 +43,23 @@ router.get("/payment", requireLogin, async function (req, res, next) {
 		});
 
 		User.addStripe({ username: res.locals.user.username, id: account.id });
+
+		const accountLink = await stripe.accountLinks.create({
+			account: account.id,
+			refresh_url: REFRESH_URL,
+			return_url: RETURN_URL,
+			type: "account_onboarding",
+		});
+
+		return res.json({ accountLink });
+	} catch (err) {
+		return next(err);
+	}
+});
+
+router.get("/reauthpayment", checkUserOrAdmin, async function (req, res, next) {
+	try {
+		const account = User.getStripe(res.locals.user.username);
 
 		const accountLink = await stripe.accountLinks.create({
 			account: account.id,

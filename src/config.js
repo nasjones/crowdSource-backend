@@ -30,4 +30,5 @@ module.exports = {
 	getDatabaseURI,
 	RETURN_URL,
 	REFRESH_URL,
+	STRIPE_KEY,
 };
