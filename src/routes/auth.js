@@ -59,8 +59,8 @@ router.get("/payment", requireLogin, async function (req, res, next) {
 
 router.get("/reauthpayment", checkUserOrAdmin, async function (req, res, next) {
 	try {
-		const account = User.getStripe(res.locals.user.username);
-
+		const account = await User.getStripe(res.locals.user.username);
+		console.log(account);
 		const accountLink = await stripe.accountLinks.create({
 			account: account.id,
 			refresh_url: REFRESH_URL,
