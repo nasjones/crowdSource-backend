@@ -19,13 +19,22 @@ class User {
 		email,
 		isAdmin,
 	}) {
-		const duplicateCheck = await db.query(
+		const usernameCheck = await db.query(
 			`SELECT username FROM users WHERE username = $1`,
 			[username]
 		);
 
-		if (duplicateCheck.rows[0])
+		if (usernameCheck.rows[0])
 			throw new BadRequestError(`Username: ${username} already in use`);
+
+		const emailCheck = await db.query(
+			`SELECT email FROM users WHERE email = $1`,
+			[email]
+		);
+		if (emailCheck.rows[0])
+			throw new BadRequestError(
+				"Email address already associated with another account."
+			);
 
 		const hashedPassword = await bcrypt.hash(password, WORK_FACTOR);
 
@@ -114,6 +123,31 @@ class User {
 		if (!investment) throw new BadRequestError("Problem sending your payment");
 
 		return investment;
+	}
+
+	static async getStripe(username) {
+		const results = await db.query(
+			"SELECT id FROM stripe_account WHERE username=$1",
+			[username]
+		);
+
+		const stripeId = results.rows[0];
+
+		if (!stripeId) throw new BadRequestError("No stripe account for this user");
+
+		return stripeId;
+	}
+
+	static async addStripe({ username, id }) {
+		await this.get(username);
+		const results = await db.query(
+			"INSERT INTO stripe_account (username,id) Values ($1,$2) Returning username, id",
+			[username, id]
+		);
+		const stripe = results.rows[0];
+		if (!stripe) throw new BadRequestError("Problem creating stripe account");
+
+		return stripe;
 	}
 }
 

@@ -10,9 +10,9 @@ CREATE TABLE users (
 CREATE TABLE products (
   product_id serial PRIMARY KEY,
   title text NOT NULL,
-  synopsis char(100),
+  synopsis varchar(100),
   description text NOT NULL,
-  amount_sought decimal(12, 2) NOT NULL CONSTRAINT positive CHECK (amount_sought > 0)
+  amount_sought decimal(9, 2) NOT NULL CONSTRAINT positive CHECK (amount_sought > 0)
 );
 
 CREATE TABLE product_creator (
@@ -20,10 +20,14 @@ CREATE TABLE product_creator (
   product_id integer REFERENCES products ON DELETE CASCADE
 );
 
-CREATE TABLE investments (
-  id serial PRIMARY KEY,
-  username varchar(25) REFERENCES users ON DELETE CASCADE,
-  product_id integer REFERENCES products ON DELETE CASCADE,
-  amount decimal(12, 2) NOT NULL CONSTRAINT positive CHECK (amount > 0)
+-- CREATE TABLE investments (
+--   id serial PRIMARY KEY,
+--   username varchar(25) REFERENCES users ON DELETE CASCADE,
+--   product_id integer REFERENCES products ON DELETE CASCADE,
+--   amount decimal(9, 2) NOT NULL CONSTRAINT positive CHECK (amount > 0)
+-- );
+CREATE TABLE stripe_account (
+  username varchar(25) REFERENCES users ON DELETE CASCADE UNIQUE,
+  id text NOT NULL UNIQUE
 );
 

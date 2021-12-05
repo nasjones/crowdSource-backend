@@ -7,6 +7,5 @@ INSERT INTO products (title, description, amount_sought)
 INSERT INTO product_creator (username, product_id)
   VALUES ('nascreator', 1), ('nasadmin', 2), ('nasadmin', 3);
 
-INSERT INTO investments (username, product_id, amount)
-  VALUES ('nasfunder', 1, 125), ('nasfunder', 2, 10);
-
+-- INSERT INTO investments (username, product_id, amount)
+--   VALUES ('nasfunder', 1, 125), ('nasfunder', 2, 10);

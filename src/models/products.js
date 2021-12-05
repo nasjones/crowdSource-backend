@@ -7,20 +7,34 @@ const {
 const User = require("./user");
 
 class Products {
-	static async create({ title, description, amountSought, username }) {
-		await User.get(username);
-		const result = await db.query(
-			"INSERT INTO products (title, description,amount_sought) VALUES ($1, $2, $3)",
-			[title, description, amountSought]
+	static async create({
+		title,
+		description,
+		amountSought,
+		username,
+		synopsis,
+	}) {
+		const userResults = await db.query(
+			"SELECT username FROM users WHERE username = $1",
+			[username]
 		);
-		const product = result.rows[0];
+
+		const user = userResults.rows[0];
+		if (!user) throw new NotFoundError(`No user:${username}`);
+
+		const productResult = await db.query(
+			"INSERT INTO products (title, description, amount_sought, synopsis) VALUES ($1, $2, $3, $4) RETURNING product_id AS id, title",
+			[title, description, amountSought, synopsis]
+		);
+
+		const product = productResult.rows[0];
 
 		await db.query(
 			"INSERT INTO product_creator (username, product_id) VALUES ($1, $2)",
 			[username, product.id]
 		);
 
-		return product;
+		return { message: `${product.title} created` };
 	}
 
 	static async getById(productId) {
@@ -33,13 +47,13 @@ class Products {
 
 		if (!product) throw new NotFoundError(`No product with id: ${productId}`);
 
-		const amountResult = await db.query(
-			"SELECT SUM(amount) AS funded FROM investments WHERE product_id=$1",
-			[productId]
-		);
-		const { funded } = amountResult.rows[0];
+		// const amountResult = await db.query(
+		// 	"SELECT SUM(amount) AS funded FROM investments WHERE product_id=$1",
+		// 	[productId]
+		// );
+		// const { funded } = amountResult.rows[0];
 
-		return { ...product, funded: funded };
+		return product;
 	}
 
 	static async getAll() {
@@ -52,6 +66,19 @@ class Products {
 		if (!product) throw new NotFoundError(`No product with id: ${productId}`);
 
 		return product;
+	}
+
+	static async getOwner(productId) {
+		const result = await db.query(
+			"SELECT username FROM product_creator WHERE product_id = $1",
+			[productId]
+		);
+		const username = result.rows[0];
+
+		if (!username)
+			throw new NotFoundError(`No owner found for product id: ${productId}`);
+
+		return username;
 	}
 }
 
